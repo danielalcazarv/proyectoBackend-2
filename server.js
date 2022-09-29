@@ -1,17 +1,11 @@
 /******Modulos******/
 import express from 'express';
-import path from 'path';
-import {fileURLToPath} from 'url';
 import morgan from 'morgan';
-
-//Solucion a __dirname
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 //Instancias de servidor
 const app = express();
-const routerProductos = require('./src/routes/productos.routes.js');
-const routerCarritos = require('./src/routes/carrito.routes.js');
+import routerProductos from './src/routes/productos.routes.js';
+import routerCarritos from './src/routes/carrito.routes.js'
 
 /******Middleware******/
 app.use(express.json());
