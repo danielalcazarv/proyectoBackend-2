@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import config from "../../src/utils/config.js";
+import {asPOJO, renameField} from "../../src/utils/objectUtils.js"
 
 await mongoose.connect (config.mongoDb.cnxStr, config.mongoDb.options);
 
@@ -29,7 +30,7 @@ class ContenedorMongoDb {
     async listar (id){
         try {
             const doc = await this.coleccion.find({_id:id},{__v:0});
-            const result = JSON.parse(JSON.stringify(doc[0]))
+            const result = renameField( asPOJO(doc[0]),'_id', 'id');
             return result;
         } catch (error) {
             console.log('No se encontró id. Tipo de error: ' + error);

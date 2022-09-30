@@ -21,8 +21,7 @@ async function middlewareGetCartId (req,res,next){
     }
 };
 
-//Valida si el carrito tiene productos ****no funciona con mongodb corregir****
-/*
+//Valida si el carrito tiene productos
 async function middlewareGetCartProdNotFound (req,res,next){
     let id = req.params.id;
     const cart = await carritosApi.listar(id);
@@ -35,7 +34,7 @@ async function middlewareGetCartProdNotFound (req,res,next){
     }else{
         next();
     }
-};*/
+};
 
 //Valida si el producto existe en db
 async function middlewareProdNotFound (req,res,next){
@@ -67,7 +66,7 @@ routerCarritos.delete('/:id', middlewareGetCartId, async (req,res)=>{
     res.status(200).json({msg:'Carrito borrado'});
 });
 
-routerCarritos.get('/:id/productos', middlewareGetCartId, async (req,res)=>{
+routerCarritos.get('/:id/productos', middlewareGetCartId, middlewareGetCartProdNotFound, async (req,res)=>{
     const cart = await carritosApi.listar(req.params.id);
     res.status(200).json(cart.productos);
 });
@@ -82,7 +81,7 @@ routerCarritos.post('/:id/productos/', middlewareGetCartId, middlewareProdNotFou
 
 routerCarritos.delete('/:id/productos/:id_prod', middlewareGetCartId,  async (req,res)=>{
     const getCurrentCart = await carritosApi.listar(req.params.id);
-    const newCart = getCurrentCart.productos.filter(obj=>obj._id!=req.params.id_prod);
+    const newCart = getCurrentCart.productos.filter(obj=>obj.id!=req.params.id_prod);
     await carritosApi.actualizar(req.params.id,{productos:[...newCart]});
     res.status(200).json({msg:'Producto eliminado del Carrito'});
 });
