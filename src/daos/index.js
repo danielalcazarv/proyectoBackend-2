@@ -28,12 +28,11 @@ switch (process.env.PERS) {
         carritosDao = new CarritosDaosFirebase();
         break;
     default:
-        console.log('memo')
-        //const {default: ProductosDaoMemoria } = await import ('./productos/ProductosDaoMemoria.js');
-        //const {default: CarritosDaoMemoria } = await import ('./carritos/ProductosDaoMemoria.js');
+        const {default: ProductosDaoMemoria } = await import ('./productos/ProductosDaoMemoria.js');
+        const {default: CarritosDaoMemoria } = await import ('./carritos/CarritosDaoMemoria.js');
         
-        //productosDao = new ProductosDaoMemoria();
-        //carritosDao = new CarritosDaoMemoria();
+        productosDao = new ProductosDaoMemoria();
+        carritosDao = new CarritosDaoMemoria();
         break;
 }
 
