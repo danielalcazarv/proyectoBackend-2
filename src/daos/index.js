@@ -13,7 +13,13 @@ switch (process.env.PERS) {
         productosDao = new ProductosDaoArchivos();
         carritosDao = new CarritosDaoArchivos();
         break;
-
+    case 'mongoDb':
+        const { default: ProductosDaoMongoDb } = await import ('./productos/ProductosDaoMongoDb.js');
+        const { default: CarritosDaoMongoDb } = await import ('./carritos/CarritosDaoMongoDb.js');
+        
+        productosDao = new ProductosDaoMongoDb();
+        carritosDao = new CarritosDaoMongoDb();
+        break;
     default:
         console.log('memo')
         //const {default: ProductosDaoMemoria } = await import ('./productos/ProductosDaoMemoria.js');

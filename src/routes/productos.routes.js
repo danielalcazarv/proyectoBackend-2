@@ -6,7 +6,7 @@ const ADM = true;
 
 /******Middleware******/
 async function middlewareGetIdNotFound (req,res,next){
-    const prod = await productosApi.listar(Number(req.params.id));
+    const prod = await productosApi.listar(req.params.id);
     if (prod==null){
         const msj = {
             error:404,
@@ -36,7 +36,7 @@ routerProductos.get('/', async (req,res)=>{
 });
 
 routerProductos.get('/:id', middlewareGetIdNotFound, async (req,res)=>{
-    let id = Number(req.params.id);
+    let id = req.params.id;
     const prod = await productosApi.listar(id);
     res.status(200).json(prod);
 });
@@ -48,13 +48,13 @@ routerProductos.post('/', middlewareAdminValid, async (req,res)=>{
 });
 
 routerProductos.delete('/:id', middlewareAdminValid, middlewareGetIdNotFound, async (req,res)=>{
-    let id = Number(req.params.id);
+    let id = req.params.id;
     await productosApi.borrar(id);
     res.status(200).json({msg:'Producto Borrado'});
 })
 
 routerProductos.put('/:id', middlewareAdminValid, middlewareGetIdNotFound, async (req, res)=>{
-    let id = Number(req.params.id);
+    let id = req.params.id;
     let obj = req.body;
     await productosApi.actualizar(id,obj);
     res.status(201).json({msg:'Producto Actualizado', new:{...req.body}});

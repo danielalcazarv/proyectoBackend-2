@@ -40,7 +40,7 @@ export class ContenedorArchivos {
     async listar (id){
         try{
             const objsCollection = await this.listarAll();
-            const idFiltrado = objsCollection.find(obj => obj.id === id);
+            const idFiltrado = objsCollection.find(obj => obj.id === Number(id));
             if (idFiltrado===undefined){
                 console.log("Contenido no encontrado.");
                 const notFound = null;
@@ -57,7 +57,7 @@ export class ContenedorArchivos {
     async borrar (id){
         try{
             const objsCollection = await this.listarAll();
-            const objsCollectionFiltrado = objsCollection.filter(obj => obj.id!=id);
+            const objsCollectionFiltrado = objsCollection.filter(obj => obj.id!=Number(id));
             const objsJson = JSON.stringify(objsCollectionFiltrado);
             await fs.writeFile(this.archivo,objsJson);
             console.log("Producto eliminado.");
@@ -80,10 +80,10 @@ export class ContenedorArchivos {
 
     async actualizar (id,obj){
         const objsCollection = await this.listarAll();
-        const objsCollectionFiltrado = objsCollection.filter(obj => obj.id!=id);
-        const objTargetId = objsCollection.filter(obj => obj.id==id);
+        const objsCollectionFiltrado = objsCollection.filter(obj => obj.id!=Number(id));
+        const objTargetId = objsCollection.filter(obj => obj.id==Number(id));
         const timestamp = objTargetId[0].timestamp;
-        const newProducto = {id:id,timestamp:timestamp, ...obj};
+        const newProducto = {id:Number(id),timestamp:timestamp, ...obj};
         objsCollectionFiltrado.push(newProducto);
         const objsJson = JSON.stringify(objsCollectionFiltrado);
         try {

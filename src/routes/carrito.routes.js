@@ -9,7 +9,7 @@ const routerCarritos = express.Router();
 /******Middleware******/
 //Valida id de carritos.
 async function middlewareGetCartId (req,res,next){
-    let id = Number(req.params.id);
+    let id = req.params.id;
     const cart = await carritosApi.listar(id);
     if (cart==null){
         const msj = {
@@ -21,9 +21,10 @@ async function middlewareGetCartId (req,res,next){
     }
 };
 
-//Valida si el carrito tiene productos
+//Valida si el carrito tiene productos ****no funciona con mongodb corregir****
+/*
 async function middlewareGetCartProdNotFound (req,res,next){
-    let id = Number(req.params.id);
+    let id = req.params.id;
     const cart = await carritosApi.listar(id);
     const index = cart.productos.findIndex(x=>x.id);
     if (index == -1){
@@ -34,7 +35,7 @@ async function middlewareGetCartProdNotFound (req,res,next){
     }else{
         next();
     }
-};
+};*/
 
 //Valida si el producto existe en db
 async function middlewareProdNotFound (req,res,next){
@@ -62,30 +63,27 @@ routerCarritos.post('/', async (req,res)=>{
 });
 
 routerCarritos.delete('/:id', middlewareGetCartId, async (req,res)=>{
-    await carritosApi.borrar(Number(req.params.id));
+    await carritosApi.borrar(req.params.id);
     res.status(200).json({msg:'Carrito borrado'});
 });
 
-routerCarritos.get('/:id/productos', middlewareGetCartId, middlewareGetCartProdNotFound, async (req,res)=>{
-    const cart = await carritosApi.listar(Number(req.params.id));
+routerCarritos.get('/:id/productos', middlewareGetCartId, async (req,res)=>{
+    const cart = await carritosApi.listar(req.params.id);
     res.status(200).json(cart.productos);
 });
 
 routerCarritos.post('/:id/productos/', middlewareGetCartId, middlewareProdNotFound, async (req,res)=>{ 
-    let idCart = Number(req.params.id);
-    const currentCart = await carritosApi.listar(idCart);
+    const currentCart = await carritosApi.listar(req.params.id);
     const newProducto = await productosApi.listar(req.body.id);
     currentCart.productos.push(newProducto);
-    await carritosApi.actualizar(idCart,{productos:[...currentCart.productos]});
+    await carritosApi.actualizar(req.params.id,{productos:[...currentCart.productos]});
     res.status(200).json({msg:'Producto Agregado al Carrito'});
 });
 
-routerCarritos.delete('/:id/productos/:id_prod', middlewareGetCartId, middlewareGetCartProdNotFound, async (req,res)=>{
-    let idCart = Number(req.params.id);
-    let idProd = Number(req.params.id_prod);
-    const getCurrentCart = await carritosApi.listar(idCart);
-    const newCart = getCurrentCart.productos.filter(obj=>obj.id!=idProd);
-    await carritosApi.actualizar(idCart,{productos:[...newCart]});
+routerCarritos.delete('/:id/productos/:id_prod', middlewareGetCartId,  async (req,res)=>{
+    const getCurrentCart = await carritosApi.listar(req.params.id);
+    const newCart = getCurrentCart.productos.filter(obj=>obj._id!=req.params.id_prod);
+    await carritosApi.actualizar(req.params.id,{productos:[...newCart]});
     res.status(200).json({msg:'Producto eliminado del Carrito'});
 });
 
