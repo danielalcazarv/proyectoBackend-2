@@ -68,15 +68,12 @@ export class ContenedorMemoria {
     };
 
     async actualizar (id, obj){
-        const objsCollection = await this.array;
-        const objsCollectionFiltrado = objsCollection.filter(obj => obj.id!=Number(id));
-        const objTargetId = objsCollection.filter(obj => obj.id==Number(id));
-        const timestamp = objTargetId[0].timestamp;
-        const newProducto = {id:Number(id),timestamp:timestamp, ...obj};
-        objsCollectionFiltrado.push(newProducto);
-        const objsJson = JSON.stringify(objsCollectionFiltrado);
         try {
-            console.log(objsJson)
+            const targetObj = await this.array.find(obj => obj.id === Number(id));
+            const newData = {id: targetObj.id, timestamp: targetObj.timestamp, ...obj}
+            Object.keys(targetObj).forEach(key =>{
+                targetObj[key] = newData[key];
+            });
         } catch (error) {
             console.log("Error al actualizar. Tipo de error: "+ error);
         }
