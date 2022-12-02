@@ -19,6 +19,7 @@ import minimist from 'minimist';
 import cluster from 'cluster';
 import os from 'os';
 import * as dotenv from 'dotenv';
+import multer from 'multer';
 dotenv.config();
 
 import passport from "passport";
@@ -57,6 +58,21 @@ app.use(express.static('./public'));
 app.use('/login', express.static('./public'));
 app.use('/api', express.static('./public'));
 app.use(morgan('dev'));
+
+//Multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb){
+        cb (null, './public/uploads');
+    },
+    filename: function (req, file, cb){
+        cb(null, file.originalname);
+    }
+})
+const upload = multer ({ 
+    storage: storage,
+    limits: {fileSize: 10000000}
+}).single('avatar')
+//D:\CODER HOUSE\BACKEND\BACKEND-VSC\proyectoBackend-2\public\uploads
 
 //Passport
 passport.use( new LocalStrategy(
@@ -179,15 +195,16 @@ app.get('/registro-error', (req,res)=>{
     res.render('registro-error');
 });
 
-app.post('/registro', async (req,res)=>{
-    const { username, password, nombre, telefono } = req.body;
+app.post('/registro', upload, async (req,res)=>{
+    const { username, password, nombre, direccion, edad, telefono } = req.body;
+    const avatar = req.file.path;
     const usuariosDb = await usuariosApi.listarAll();
     const existeUsuario = usuariosDb.find(x=>x.username == username);
 
     if(existeUsuario){
         res.render('registro-error')
     }else {
-        const usuarioNuevo = {username, password: await generateHashPassword(password), nombre, telefono};
+        const usuarioNuevo = { username, password: await generateHashPassword(password), nombre, direccion, edad, telefono, avatar };
         usuariosApi.guardar(usuarioNuevo);
         res.redirect('/login');
     }
