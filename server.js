@@ -67,12 +67,13 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb){
         cb(null, file.originalname);
     }
-})
+});
+
 const upload = multer ({ 
     storage: storage,
     limits: {fileSize: 10000000}
-}).single('avatar')
-//D:\CODER HOUSE\BACKEND\BACKEND-VSC\proyectoBackend-2\public\uploads
+}).single('avatar');
+
 
 //Passport
 passport.use( new LocalStrategy(
